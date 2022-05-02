@@ -31,6 +31,11 @@ const UserSchema = new Schema({
         required: false,
         default: undefined
     },
+    profileBio: {
+        type: String,
+        required: false,
+        default: ""
+    },
     isAdministrator: {
         type: Boolean,
         required: false,
