@@ -81,3 +81,12 @@ module.exports.addUser = (userData) => {
         })
     });
 }
+
+// Get user by Firebase UUID.
+module.exports.getUserByUUID = (UUID) => {
+    return new Promise((resolve, reject) => {
+        Users.findOne({ uuid: UUID }).exec().then((user) => {
+            resolve(user);
+        }).catch(err => reject(err));
+    });
+}

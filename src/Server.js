@@ -28,7 +28,18 @@ app.post('/api/users', (req, res) => {
 
         }).catch( err => res.status(500).json({ error: err }));
     }
-})
+});
+
+app.get('/api/users/:id', (req, res) => {
+    const { id } = req.params;
+
+    if (!id) { res.status(400).json({ error: "You must provide a user Firebase UUID." }); }
+    else {
+
+        Database.getUserByUUID(id).then(u => res.status(200).json({ message: "Found the target user!", data: u })).catch(err => res.status(500).json({ error: err }));
+
+    }
+});
 
 // Get the API server listening.
 Database.connect(process.env.MONGO_URL).then(() => {
