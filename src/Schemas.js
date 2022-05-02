@@ -36,6 +36,11 @@ const UserSchema = new Schema({
         required: false,
         default: ""
     },
+    isPrivate: {
+        type: Boolean,
+        required: false,
+        default: false
+    },
     isAdministrator: {
         type: Boolean,
         required: false,
