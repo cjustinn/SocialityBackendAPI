@@ -184,6 +184,27 @@ module.exports.getPostsByUser = (userId) => {
     });
 }
 
+// Create a new follow relationship
+module.exports.addFollow = (followData) => {
+    return new Promise((resolve, reject) => {
+        let followRelationship = new Follows(followData);
+        followRelationship.save(err => {
+            if (err) {
+                reject(err);
+            } else { resolve(followRelationship) }
+        });
+    });
+}
+
+// Remove a follow relationship
+module.exports.removeFollow = (followedId, followerId) => {
+    return new Promise((resolve, reject) => {
+        Follows.deleteOne({ follower: followerId, followed: followedId }).exec().then(() => {
+            resolve(`Successfully removed the follow relationship`);
+        }).catch(err => reject(err));
+    })
+}
+
 // Check if a user follow relationship exists
 module.exports.checkIfFollowed = (followerId, followedId) => {
     return new Promise((resolve, reject) =>{ 

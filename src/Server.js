@@ -80,6 +80,32 @@ app.get('/api/follow/status', (req, res) => {
         }).catch(err => res.status(500).json({ error: err }));
 
     }
+});
+
+app.post('/api/follow', (req, res) => {
+    if (!req.body.followData) {
+        res.status(400).json({ error: `You must provide data for the follow relationship.` })
+    } else {
+
+        Database.addFollow(req.body.followData).then(newFollow => {
+            res.status(201).json({ message: `Successfully created the follow relationship.`, data: newFollow });
+        }).catch(err => res.status(500).json({ error: err }));
+
+    }
+});
+
+app.delete('/api/follow', (req, res) => {
+    const { following, follower } = req.query;
+
+    if (!following || !follower) {
+        res.status(400).json({ error: `You must provide both a follower and a followee.` });
+    } else {
+
+        Database.removeFollow(following, follower).then(result => {
+            res.status(204);
+        }).catch(err => res.status(500).json({ error: err }));
+
+    }
 })
 
 // Get the API server listening.
