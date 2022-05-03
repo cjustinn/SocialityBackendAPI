@@ -102,7 +102,7 @@ app.delete('/api/follow', (req, res) => {
     } else {
 
         Database.removeFollow(following, follower).then(result => {
-            res.status(204);
+            res.status(200).json({ message: result });
         }).catch(err => res.status(500).json({ error: err }));
 
     }
