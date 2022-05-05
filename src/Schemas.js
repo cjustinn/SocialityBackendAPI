@@ -381,7 +381,7 @@ module.exports.removeFollowRequest = (requestedId, targetId) => {
 // Get follow requests by user.
 module.exports.getFollowRequestsForUser = (userId) => {
     return new Promise((resolve, reject) => {
-        FollowRequests.find({ target: userId }).sort('-dateRequested').exec().then(requests => {
+        FollowRequests.find({ target: userId }).sort('-dateRequested').populate('requester', [ '_id', 'displayName', 'accountHandle', 'isVerified' ]).exec().then(requests => {
             resolve(requests);
         }).catch(err => reject(err));
     });
