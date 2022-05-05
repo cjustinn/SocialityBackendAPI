@@ -226,7 +226,7 @@ app.post('/api/followrequests', (req, res) => {
     }
 });
 
-app.get('/api/followrequests/:id', (req, res) => {
+app.get('/api/followrequests/user/:id', (req, res) => {
     const { id } = req.params;
 
     Database.getFollowRequestsForUser(id).then(requests => {
@@ -236,7 +236,7 @@ app.get('/api/followrequests/:id', (req, res) => {
 
 app.get('/api/followrequests/status', (req, res) => {
     const { requester, target } = req.query;
-
+    
     if (!requester || !target) {
         res.status(400).json({ error: `You must provide both the requester and target ObjectId.` });
     } else {

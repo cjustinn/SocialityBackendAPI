@@ -241,7 +241,7 @@ module.exports.removeFollow = (followedId, followerId) => {
 // Check if a user follow relationship exists
 module.exports.checkIfFollowed = (followerId, followedId) => {
     return new Promise((resolve, reject) =>{ 
-        Follows.exists({ follower: followerId, followed: followedId }).then(status => resolve(status)).catch(err => reject(err));
+        Follows.exists({ follower: followerId, followed: followedId }).then(status => resolve(status ? true : false)).catch(err => reject(err));
     });
 }
 
@@ -389,9 +389,7 @@ module.exports.getFollowRequestsForUser = (userId) => {
 
 // Check status of follow request for the user.
 module.exports.checkIfFollowRequested = (requesterId, targetId) => {
-    return new Promise((resolve, reject) => {
-        FollowRequests.exists({ target: targetId, requester: requesterId }).exec().then(status => {
-            resolve(status);
-        }).catch(err => reject(err));
-    })
+    return new Promise((resolve, reject) =>{
+        FollowRequests.exists({ requester: requesterId, target: targetId }).then(status => resolve(status ? true : false)).catch(err => reject(err));
+    });
 }
