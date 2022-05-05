@@ -290,3 +290,10 @@ module.exports.removeLike = (likeUserId, postId) => {
         }).catch(err => reject(err));
     });
 }
+
+// Count likes for post.
+module.exports.countLikesByPost = (postId) => {
+    return new Promise((resolve, reject) => {
+        Likes.countDocuments({ post: postId }).exec().then(count => resolve(count)).catch(err => reject(err));
+    });
+}

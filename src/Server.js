@@ -73,7 +73,15 @@ app.get('/api/posts/user/:id', (req, res) => {
     const { id } = req.params;
 
     Database.getPostsByUser(id).then(posts => {
-        res.status(200).json({ message: `Successfully retrieved all posts by target user.`, data: posts });
+        let filteredPostsList = posts.map(async p => {
+            let updatedPostObj = p;
+
+            updatedPostObj = { ...updatedPostObj, likeCount: await Database.countLikesByPost(p._id) };
+
+            return updatedPostObj;
+        });
+
+        res.status(200).json({ message: `Successfully retrieved all posts by target user.`, data: filteredPostsList });
     }).catch(err => res.status(500).json({ error: err }));
 });
 
