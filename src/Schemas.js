@@ -196,15 +196,6 @@ module.exports.getUserProfileCounts = async (userId) => {
     return counts;
 }
 
-// Get all posts by user.
-module.exports.getPostsByUser = (userId) => {
-    return new Promise((resolve, reject) => {
-        Posts.find({ poster: userId }).sort("-postDate").exec().then((posts) => {
-            resolve(posts);
-        }).catch(err => reject(err));
-    });
-}
-
 // Create a new follow relationship
 module.exports.addFollow = (followData) => {
     return new Promise((resolve, reject) => {
@@ -295,5 +286,25 @@ module.exports.removeLike = (likeUserId, postId) => {
 module.exports.countLikesByPost = (postId) => {
     return new Promise((resolve, reject) => {
         Likes.countDocuments({ post: postId }).exec().then(count => resolve(count)).catch(err => reject(err));
+    });
+}
+
+// Get all posts by user.
+module.exports.getPostsByUser = (userId) => {
+    return new Promise(async (resolve, reject) => {
+        let posts = [];
+        let finalisedPosts = [];
+
+        posts = await Posts.find({ poster: userId }).sort("-postDate").exec().then((userPosts) => {
+            return userPosts;
+        }).catch(err => { return err });
+
+        for (let i = 0; i < posts.length; i++) {
+
+            finalisedPosts.push({ ...posts[i]._doc, likes: await this.countLikesByPost(posts[i]._doc._id) });
+
+        }
+        
+        resolve(finalisedPosts);
     });
 }

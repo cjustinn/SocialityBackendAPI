@@ -69,21 +69,11 @@ app.post('/api/posts', (req, res) => {
     }
 });
 
-app.get('/api/posts/user/:id', (req, res) => {
+app.get('/api/posts/user/:id', async (req, res) => {
     const { id } = req.params;
 
     Database.getPostsByUser(id).then(posts => {
-        let filteredPostsList = posts.map(async p => {
-            let updatedPostObj = p._doc;
-
-            updatedPostObj = { ...updatedPostObj, likeCount: await Database.countLikesByPost(updatedPostObj._id) };
-
-            console.log(JSON.stringify(updatedPostObj));
-
-            return updatedPostObj;
-        });
-
-        res.status(200).json({ message: `Successfully retrieved all posts by target user.`, data: filteredPostsList });
+        res.status(200).json({ message: `Successfully retrieved all user posts.`, data: posts });
     }).catch(err => res.status(500).json({ error: err }));
 });
 
