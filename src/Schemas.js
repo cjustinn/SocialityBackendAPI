@@ -295,7 +295,7 @@ module.exports.getPostsByUser = (userId) => {
         let posts = [];
         let finalisedPosts = [];
 
-        posts = await Posts.find({ poster: userId }).sort("-postDate").exec().then((userPosts) => {
+        posts = await Posts.find({ poster: userId }).sort("-postDate").populate('poster', [ 'displayName', 'photoURL', '_id', 'accountHandle', 'isVerified' ]).exec().then((userPosts) => {
             return userPosts;
         }).catch(err => { return err });
 
