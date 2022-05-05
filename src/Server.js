@@ -100,6 +100,30 @@ app.get('/api/follow/status', (req, res) => {
     }
 });
 
+app.get('/api/follow', (req, res) => {
+    const { type, target } = req.query;
+
+    if (!type || !target) {
+        res.status(400).json({ error: `You must provide a valid type ('following' || 'follower') and target value.` });
+    } else {
+        if (type !== 'following' && type !== 'follower') {
+            res.status(400).json({ error: `You must provide either 'following' or 'follower' as the type value.` });
+        } else {
+
+            if (type === 'following') {
+                Database.getFollowing(target).then(following => {
+                    res.status(200).json({ message: `Successfully retrieved all followers for the target user.`, data: following });
+                }).catch(err => res.status(500).json({ error: err }));
+            } else {
+                Database.getFollowers(target).then(followers => {
+                    res.status(200).json({ message: `Successfully retrieved all followers for the target user.`, data: followers });
+                }).catch(err => res.status(500).json({ error: err }));
+            }
+
+        }
+    }
+});
+
 app.post('/api/follow', (req, res) => {
     if (!req.body.followData) {
         res.status(400).json({ error: `You must provide data for the follow relationship.` })

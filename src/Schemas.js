@@ -315,3 +315,21 @@ module.exports.checkIfPostLiked = (userId, postId) => {
         Likes.exists({ likedBy: userId, post: postId }).exec().then(status => resolve(status)).catch(err => reject(err));
     });
 }
+
+// Get all followers of target.
+module.exports.getFollowers = (target) => {
+    return new Promise((resolve, reject) => {
+        Follows.find({ followed: target }).sort('-dateFollowed').exec().then(followers => {
+            resolve(followers);
+        }).catch(err => reject(err));
+    });
+}
+
+// Get all users followed by target.
+module.exports.getFollowing = (target) => {
+    return new Promise((resolve, reject) => {
+        Follows.find({ follower: target }).sort('-dateFollowed').exec().then(following => {
+            resolve(following);
+        }).catch(err => reject(err));
+    });
+}
