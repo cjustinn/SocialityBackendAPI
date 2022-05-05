@@ -175,7 +175,7 @@ app.get('/api/likes/status', (req, res) => {
 
 app.delete('/api/likes', (req, res) => {
 
-    const { userId, postId } = req.params;
+    const { userId, postId } = req.query;
     
     Database.removeLike(userId, postId).then(() => {
         res.status(200).json({ message: `Successfully unliked the post.` });
