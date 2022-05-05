@@ -386,3 +386,12 @@ module.exports.getFollowRequestsForUser = (userId) => {
         }).catch(err => reject(err));
     });
 }
+
+// Check status of follow request for the user.
+module.exports.checkIfFollowRequested = (requesterId, targetId) => {
+    return new Promise((resolve, reject) => {
+        FollowRequests.exists({ target: targetId, requester: requesterId }).exec().then(status => {
+            resolve(status);
+        }).catch(err => reject(err));
+    })
+}

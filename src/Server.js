@@ -234,6 +234,20 @@ app.get('/api/followrequests/:id', (req, res) => {
     }).catch(err => res.status(500).json({ error: err }));
 });
 
+app.get('/api/followrequests/status', (req, res) => {
+    const { requester, target } = req.query;
+
+    if (!requester || !target) {
+        res.status(400).json({ error: `You must provide both the requester and target ObjectId.` });
+    } else {
+
+        Database.checkIfFollowRequested(requester, target).then(status => {
+            res.status(200).json({ message: `Successfully checked follow request status.`, data: status });
+        }).catch(err => res.status(500).json({ error: err }));
+
+    }
+});
+
 app.delete('/api/followrequests', (req, res) => {
     const { requester, target } = req.query;
     
