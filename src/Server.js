@@ -160,6 +160,19 @@ app.get('/api/likes', (req, res) => {
     }
 });
 
+app.get('/api/likes/status', (req, res) => {
+    const { user, post } = req.query;
+    if (!user || !post) {
+        res.status(400).json({ error: `You must provide both a post and a user ObjectId.` });
+    } else {
+
+        Database.checkIfPostLiked(user, post).then(status => {
+            res.status(200).json({ message: `Successfully retrieved like status.`, data: status })
+        }).catch(err => res.status(500).json({ error: err }));
+
+    }
+})
+
 app.delete('/api/likes', (req, res) => {
 
     const { userId, postId } = req.params;

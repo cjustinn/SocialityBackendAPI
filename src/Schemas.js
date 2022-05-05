@@ -308,3 +308,10 @@ module.exports.getPostsByUser = (userId) => {
         resolve(finalisedPosts);
     });
 }
+
+// Check if post is liked by user.
+module.exports.checkIfPostLiked = (userId, postId) => {
+    return new Promise((resolve, reject) => {
+        Likes.exists({ likedBy: userId, post: postId }).exec().then(status => resolve(status)).catch(err => reject(err));
+    });
+}
