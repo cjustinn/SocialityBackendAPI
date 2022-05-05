@@ -413,3 +413,9 @@ module.exports.approveFollowRequest = async (requestId) => {
 
     return `Successfully approved the follow request.`;
 }
+
+module.exports.accountHandleInUse = (handle) => {
+    return new Promise((resolve, reject) => {
+        Users.exists({ accountHandle: handle }).exec().then(status => resolve(status ? true : false)).catch(err => reject(err));
+    });
+}

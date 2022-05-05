@@ -41,6 +41,14 @@ app.get('/api/users/:id', (req, res) => {
     }
 });
 
+app.get('/api/users/handle/:id', (req, res) => {
+    const { id } = req.params;
+
+    Database.accountHandleInUse(id).then(status => {
+        res.status(200).json({ data: status });
+    }).catch(err => res.status(500).json({ error: err }));
+});
+
 // Profile Routes
 app.get('/api/profile/:id', (req, res) => {
     const { id } = req.params;
