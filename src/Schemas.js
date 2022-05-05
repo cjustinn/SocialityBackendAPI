@@ -115,11 +115,31 @@ const LikeSchema = new Schema({
     }
 });
 
+// Follow Request Schema
+const FollowRequestSchema = new Schema({
+    requester: {
+        type: Schema.Types.ObjectId,
+        required: true,
+        ref: "Users"
+    },
+    target: {
+        type: Schema.Types.ObjectId,
+        required: true,
+        ref: "Users"
+    },
+    dateRequested: {
+        type: Date,
+        required: false,
+        default: Date.now()
+    }
+});
+
     // OBJECT DEFINITIONS
 let Users;
 let Posts;
 let Follows;
 let Likes;
+let FollowRequests;
 
     // FUNCTION DEFINITIONS
 // Connect to the Mongo database.
@@ -140,6 +160,7 @@ module.exports.connect = (conString) => {
             Posts = db.model("Posts", PostSchema);
             Follows = db.model("Follows", FollowSchema);
             Likes = db.model("Likes", LikeSchema);
+            FollowRequests = db.model("FollowRequests", FollowRequestSchema);
 
             resolve();
 
@@ -330,6 +351,38 @@ module.exports.getFollowing = (target) => {
     return new Promise((resolve, reject) => {
         Follows.find({ follower: target }).sort('-dateFollowed').populate('followed', [ '_id', 'displayName', 'photoURL', 'accountHandle', 'isVerified' ]).exec().then(following => {
             resolve(following);
+        }).catch(err => reject(err));
+    });
+}
+
+// Create new follow request.
+module.exports.addFollowRequest = (requestData) => {
+    return new Promise((resolve, reject) => {
+        let req = new FollowRequests(requestData);
+        req.save(err => {
+            if (err) {
+                reject(err);
+            } else {
+                resolve(req);
+            }
+        })
+    });
+}
+
+// Remove follow request
+module.exports.removeFollowRequest = (requestedId, targetId) {
+    return new Promise((resolve, reject) => {
+        FollowRequests.deleteOne({ requester: requestedId, target: targetId }).exec().then(() => {
+            resolve(`Successfully removed the request.`);
+        }).catch(err => reject(err));
+    });
+}
+
+// Get follow requests by user.
+module.exports.getFollowRequestsForUser = (userId) => {
+    return new Promise((resolve, reject) => {
+        FollowRequests.find({ target: userId }).sort('-dateRequested').exec().then(requests => {
+            resolve(requests);
         }).catch(err => reject(err));
     });
 }

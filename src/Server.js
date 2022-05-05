@@ -213,6 +213,41 @@ app.delete('/api/likes', (req, res) => {
 
 });
 
+// Follow Request Routes
+app.post('/api/followrequests', (req, res) => {
+    if (!req.body.requestData) {
+        res.status(400).json({ error: `You must provide follow request data.` });
+    } else {
+
+        Database.addFollowRequest(req.body.requestData).then(requests => {
+            res.status(201).json({ message: `Successfully registered the follow request.`, data: requests });
+        }).catch(err => res.status(500).json({ error: err }));
+
+    }
+});
+
+app.get('/api/followrequests/:id', (req, res) => {
+    const { id } = req.params;
+
+    Database.getFollowRequestsForUser(id).then(requests => {
+        res.status(200).json({ message: `Successfully retrieved all follow requests for user.`, data: requests });
+    }).catch(err => res.status(500).json({ error: err }));
+});
+
+app.delete('/api/followrequests', (req, res) => {
+    const { requester, target } = req.query;
+    
+    if (!requester || !target) {
+        res.status(400).json({ error: `You must provide both the requester and target ObjectId.` });
+    } else {
+
+        Database.removeFollowRequest(requester, target).then(() => {
+            res.status(200).json({ message: `Successfully removed the request.` });
+        }).catch(err => res.status(500).json({ error: err }));
+
+    }
+});
+
 // Get the API server listening.
 Database.connect(process.env.MONGO_URL).then(() => {
     app.listen(PORT, () => {
