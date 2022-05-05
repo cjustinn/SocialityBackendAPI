@@ -370,7 +370,7 @@ module.exports.addFollowRequest = (requestData) => {
 }
 
 // Remove follow request
-module.exports.removeFollowRequest = (requestedId, targetId) {
+module.exports.removeFollowRequest = (requestedId, targetId) => {
     return new Promise((resolve, reject) => {
         FollowRequests.deleteOne({ requester: requestedId, target: targetId }).exec().then(() => {
             resolve(`Successfully removed the request.`);
