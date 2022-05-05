@@ -74,9 +74,9 @@ app.get('/api/posts/user/:id', (req, res) => {
 
     Database.getPostsByUser(id).then(posts => {
         let filteredPostsList = posts.map(async p => {
-            let updatedPostObj = p;
+            let updatedPostObj = p._doc;
 
-            updatedPostObj = { ...updatedPostObj, likeCount: await Database.countLikesByPost(p._id) };
+            updatedPostObj = { ...updatedPostObj, likeCount: await Database.countLikesByPost(updatedPostObj._id) };
 
             console.log(JSON.stringify(updatedPostObj));
 
