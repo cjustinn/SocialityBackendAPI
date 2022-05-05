@@ -171,7 +171,13 @@ app.get('/api/likes/status', (req, res) => {
         }).catch(err => res.status(500).json({ error: err }));
 
     }
-})
+});
+
+app.get('/api/likes/count/:id', (req, res) => {
+    const { id } = req.params;
+
+    Database.countLikesByPost(id).then(likes => res.status(200).json({ message: `Retrieved the like counter for the target post.`, data: likes })).catch(err => res.status(500).json({ error: err }));
+});
 
 app.delete('/api/likes', (req, res) => {
 
