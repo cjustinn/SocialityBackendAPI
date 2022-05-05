@@ -406,7 +406,7 @@ module.exports.approveFollowRequest = async (requestId) => {
     
     await this.addFollow({
         follower: req.requester,
-        following: req.target
+        followed: req.target
     });
 
     await this.removeFollowRequest(req.requester, req.target);
