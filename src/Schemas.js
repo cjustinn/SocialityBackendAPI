@@ -96,10 +96,30 @@ const FollowSchema = new Schema({
     }
 });
 
+// Post Like Schema
+const LikeSchema = new Schema({
+    likedBy: {
+        type: Schema.Types.ObjectId,
+        required: true,
+        ref: "Users"
+    },
+    post: {
+        type: Schema.Types.ObjectId,
+        required: true,
+        ref: "Posts"
+    },
+    dateLiked: {
+        type: Date,
+        required: false,
+        default: Date.now()
+    }
+});
+
     // OBJECT DEFINITIONS
 let Users;
 let Posts;
 let Follows;
+let Likes;
 
     // FUNCTION DEFINITIONS
 // Connect to the Mongo database.
@@ -119,6 +139,7 @@ module.exports.connect = (conString) => {
             Users = db.model('Users', UserSchema);
             Posts = db.model("Posts", PostSchema);
             Follows = db.model("Follows", FollowSchema);
+            Likes = db.model("Likes", LikeSchema);
 
             resolve();
 
@@ -209,5 +230,63 @@ module.exports.removeFollow = (followedId, followerId) => {
 module.exports.checkIfFollowed = (followerId, followedId) => {
     return new Promise((resolve, reject) =>{ 
         Follows.exists({ follower: followerId, followed: followedId }).then(status => resolve(status)).catch(err => reject(err));
+    });
+}
+
+// Create a post
+module.exports.addPost = (postData) => {
+    return new Promise((resolve, reject) => {
+        let post = new Posts(postData);
+        post.save(err => {
+            if (err) {
+                reject(err);
+            } else {
+                resolve(post);
+            }
+        });
+    });
+}
+
+// Get post data
+module.exports.getPost = (postId) => {
+    return new Promise((resolve, reject) => {
+        Posts.findOne({ _id: postId }).exec().then(post => resolve(post)).catch(err => reject(err));
+    });
+}
+
+// Create a like
+module.exports.addLike = (likeData) => {
+    return new Promise((resolve, reject) => {
+        let like = new Likes(likeData);
+        like.save(err => {
+            if (err) {
+                reject(err);
+            } else {
+                resolve(like);
+            }
+        })
+    });
+}
+
+// Get all likes for a post
+module.exports.getLikesByPost = (postId) => {
+    return new Promise((resolve, reject) => {
+        Likes.find({ post: postId }).sort('-dateLiked').exec().then(postLikes => resolve(postLikes)).catch(err => reject(err));
+    });
+}
+
+// Get likes by user.
+module.exports.getLikesByUser = (userId) => {
+    return new Promise((resolve, reject) => {
+        Likes.find({ likedBy: userId }).sort('-dateLiked').exec().then(userLikes => resolve(userLikes)).catch(err => reject(err));
+    });
+}
+
+// Remove a like
+module.exports.removeLike = (likeUserId, postId) => {
+    return new Promise((resolve, reject) => {
+        Likes.deleteOne({ likedBy: likeUserId, post: postId }).exec().then(() => {
+            resolve(`Successfully removed like.`);
+        }).catch(err => reject(err));
     });
 }
