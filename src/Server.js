@@ -78,6 +78,8 @@ app.get('/api/posts/user/:id', (req, res) => {
 
             updatedPostObj = { ...updatedPostObj, likeCount: await Database.countLikesByPost(p._id) };
 
+            console.log(JSON.stringify(updatedPostObj));
+
             return updatedPostObj;
         });
 
