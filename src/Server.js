@@ -248,6 +248,14 @@ app.get('/api/followrequests/status', (req, res) => {
     }
 });
 
+app.get('/api/followrequests/approve/:id', (req, res) => {
+    const { id } = req.params;
+
+    Database.approveFollowRequest(id).then(() => {
+        res.status(200).json({ message: `The follow request has been approved.` });
+    }).catch(err => res.status(500).json({ error: err }));
+})
+
 app.delete('/api/followrequests', (req, res) => {
     const { requester, target } = req.query;
     

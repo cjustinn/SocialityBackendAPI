@@ -393,3 +393,23 @@ module.exports.checkIfFollowRequested = (requesterId, targetId) => {
         FollowRequests.exists({ requester: requesterId, target: targetId }).then(status => resolve(status ? true : false)).catch(err => reject(err));
     });
 }
+
+module.exports.getFollowRequestById = (reqId) => {
+    return new Promise((resolve, reject) => {
+        FollowRequests.findOne({ _id: reqId }).exec().then(req => resolve(req)).catch(err => reject(err));
+    });
+}
+
+// Approve a follow request.
+module.exports.approveFollowRequest = async (requestId) => {
+    let req = await this.getFollowRequestById(requestId);
+    
+    await this.addFollow({
+        follower: req.requester,
+        following: req.target
+    });
+
+    await this.removeFollowRequest(req.requester, req.target);
+
+    return `Successfully approved the follow request.`;
+}
