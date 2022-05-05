@@ -319,7 +319,7 @@ module.exports.checkIfPostLiked = (userId, postId) => {
 // Get all followers of target.
 module.exports.getFollowers = (target) => {
     return new Promise((resolve, reject) => {
-        Follows.find({ followed: target }).sort('-dateFollowed').populate('follower', [ '_id', 'displayName', 'photoURL', 'accountHandle' ]).exec().then(followers => {
+        Follows.find({ followed: target }).sort('-dateFollowed').populate('follower', [ '_id', 'displayName', 'photoURL', 'accountHandle', 'isVerified' ]).exec().then(followers => {
             resolve(followers);
         }).catch(err => reject(err));
     });
@@ -328,7 +328,7 @@ module.exports.getFollowers = (target) => {
 // Get all users followed by target.
 module.exports.getFollowing = (target) => {
     return new Promise((resolve, reject) => {
-        Follows.find({ follower: target }).sort('-dateFollowed').populate('followed', [ '_id', 'displayName', 'photoURL', 'accountHandle' ]).exec().then(following => {
+        Follows.find({ follower: target }).sort('-dateFollowed').populate('followed', [ '_id', 'displayName', 'photoURL', 'accountHandle', 'isVerified' ]).exec().then(following => {
             resolve(following);
         }).catch(err => reject(err));
     });
