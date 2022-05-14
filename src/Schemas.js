@@ -414,8 +414,27 @@ module.exports.approveFollowRequest = async (requestId) => {
     return `Successfully approved the follow request.`;
 }
 
+// Check if an account handle is being used.
 module.exports.accountHandleInUse = (handle) => {
     return new Promise((resolve, reject) => {
         Users.exists({ accountHandle: handle }).exec().then(status => resolve(status ? true : false)).catch(err => reject(err));
+    });
+}
+
+// Delete a post.
+module.exports.removePost = postId => {
+    return new Promise((resolve, reject) => {
+        Posts.deleteOne({ _id: postId }).exec().then(() => {
+            resolve(`Successfully deleted the post.`);
+        }).catch(err => reject(err));
+    });
+}
+
+// Update the user profile.
+module.exports.updateUser = (uid, userData) => {
+    return new Promise((resolve, reject) => {
+        Users.updateOne({ _id:  uid }, { $set: userData }).exec().then(updatedUser => {
+            resolve(updatedUser);
+        }).catch(err => reject(err));
     });
 }

@@ -41,6 +41,18 @@ app.get('/api/users/:id', (req, res) => {
     }
 });
 
+app.put('/api/users/:id', (req, res) => {
+    const { id } = req.params;
+
+    if (!req.body.userData) {
+        res.status(400).json({ error: `You must provide user data to update.` });
+    } else {
+        Database.updateUser(id, req.body.userData).then(updatedUser => {
+            res.status(200).json({ message: `Successfully updated the target user's profile.`, data: updatedUser });
+        }).catch(err => res.status(500).json({ error: err }));
+    }
+});
+
 app.get('/api/users/handle/:id', (req, res) => {
     const { id } = req.params;
 
@@ -90,6 +102,16 @@ app.get('/api/posts/single/:id', (req, res) => {
 
     Database.getPost(id).then(post => {
         res.status(200).json({ message: `Successfully retrieved the post.`, data: post });
+    }).catch(err => res.status(500).json({ error: err }));
+});
+
+app.delete('/api/posts/:id', (req, res) => {
+    const { id } = req.params;
+
+    Database.removePost(id).then(msg => {
+
+        res.status(200).json({ message: msg });
+
     }).catch(err => res.status(500).json({ error: err }));
 });
 
