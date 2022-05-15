@@ -454,3 +454,10 @@ module.exports.selectRandomPosts = async (uid, postCount) => {
 
     return explorePosts;
 }
+
+// Search for a user by either display name or account handle.
+module.exports.searchForUser = query => {
+    return new Promise((resolve, reject) => {
+        Users.find({ $or: [{ accountHandle: { "$regex": query, "$options": "i" } }, { displayName: { "$regex": query, "$options": "i" } }] }).select('photoURL accountHandle displayName isVerified creationTime').exec().then(found => resolve(found)).catch(err => reject(err));
+    });
+}

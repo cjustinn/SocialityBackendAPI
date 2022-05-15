@@ -61,6 +61,20 @@ app.get('/api/users/handle/:id', (req, res) => {
     }).catch(err => res.status(500).json({ error: err }));
 });
 
+app.get('/api/search', (req, res) => {
+    const { query } = req.query;
+
+    if (!query) {
+        res.status(400).json({ error: `You must provide a search query.` });
+    } else {
+
+        Database.searchForUser(query).then(found => {
+            res.status(200).json({ message: `Found the following search results with the provided query.`, data: found });
+        }).catch(err => res.status(500).json({ error: err }));
+
+    }
+})
+
 // Profile Routes
 app.get('/api/profile/:id', (req, res) => {
     const { id } = req.params;
