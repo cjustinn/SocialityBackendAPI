@@ -441,6 +441,14 @@ module.exports.updateUser = (uid, userData) => {
 
 // Select 'postCount' amount of random posts from the database.
 module.exports.selectRandomPosts = async (uid, postCount) => {
-    let followed = await this.getFollowing(uid);
-    return Users.aggregate().sample(postCount);
+    let followed = await Follows.find({ follower: uid }).select('-_id followed').exec();
+
+    let followedList = followed.map(_f => {
+        return _f.followed;
+    });
+
+    followedList.push(new mongoose.Types.ObjectId(uid));
+
+    console.log(followedList);
+    return Posts.aggregate().sample(postCount).match({ poster: { $nin: followedList } });
 }
