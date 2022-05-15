@@ -112,7 +112,7 @@ app.get('/api/posts/random', (req, res) => {
         res.status(400).json({ error: `You must provide a user id.` });
     }
 
-    Database.selectRandomPosts(id, count ? count : 10).then(posts => {
+    Database.selectRandomPosts(id, count ? parseInt(count) : 10).then(posts => {
         res.status(200).json({ message: `Successfully retrieved ${count ? count : 10} random posts.`, data: posts });
     }).catch(err => res.status(500).json({ error: err  }));
 })
