@@ -438,3 +438,9 @@ module.exports.updateUser = (uid, userData) => {
         }).catch(err => reject(err));
     });
 }
+
+// Select 'postCount' amount of random posts from the database.
+module.exports.selectRandomPosts = async (uid, postCount) => {
+    let followed = await this.getFollowing(uid);
+    return Users.aggregate().sample(postCount);
+}

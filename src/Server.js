@@ -105,6 +105,14 @@ app.get('/api/posts/single/:id', (req, res) => {
     }).catch(err => res.status(500).json({ error: err }));
 });
 
+app.get('/api/posts/random', (req, res) => {
+    const { count } = req.query;
+    
+    Database.selectRandomPosts(count ? count : 10).then(posts => {
+        res.status(200).json({ message: `Successfully retrieved ${count ? count : 10} random posts.` });
+    }).catch(err => res.status(500).json({ error: err  }));
+})
+
 app.delete('/api/posts/:id', (req, res) => {
     const { id } = req.params;
 
