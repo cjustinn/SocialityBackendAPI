@@ -449,6 +449,8 @@ module.exports.selectRandomPosts = async (uid, postCount) => {
 
     followedList.push(new mongoose.Types.ObjectId(uid));
 
-    console.log(followedList);
-    return Posts.aggregate().sample(postCount).match({ poster: { $nin: followedList } });
+    const explorePosts = await Posts.aggregate().sample(postCount).match({ poster: { $nin: followedList } });
+    await Users.populate(explorePosts, { path: 'poster', select: 'displayName photoURL _id accountHandle isVerified'});
+
+    return explorePosts;
 }
