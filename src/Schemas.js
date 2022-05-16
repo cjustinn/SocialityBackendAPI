@@ -474,12 +474,14 @@ module.exports.getFeedPosts = async uid => {
     let followed = await Follows.find({ follower: uid }).select('-_id followed').exec();
     let followedList = followed.map(_f => _f.followed);
 
+    followedList.push(new mongoose.Types.ObjectId(uid));
+
     let finalisedPostList = [];
 
     const feedPosts = await Posts.find({ poster: { $in: followedList } }).populate('poster', [ 'displayName', 'accountHandle', 'photoURL', '_id', 'isVerified' ]).sort('-postDate').exec();
 
     for (let i = 0; i < feedPosts.length; i++) {
-        finalisedPostList.push({ ...feedPosts[i], likes: await this.countLikesByPost(feedPosts[i]._id)});
+        finalisedPostList.push({ ...feedPosts[i]._doc, likes: await this.countLikesByPost(feedPosts[i]._doc._id)});
     }
 
     return finalisedPostList;
