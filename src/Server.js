@@ -132,6 +132,14 @@ app.get('/api/posts/random', (req, res) => {
         console.log(err);
         res.status(500).json({ error: err  });
     });
+});
+
+app.get('/api/posts/feed/:id', (req, res) => {
+    const { id } = req.params;
+
+    Database.getFeedPosts(id).then(posts => {
+        res.status(200).json({ message: `Successfully retrieved all posts for the user feed.`, data: posts });
+    }).catch(err => res.status(500).json({ error: err }));
 })
 
 app.delete('/api/posts/:id', (req, res) => {

@@ -468,3 +468,12 @@ module.exports.searchForUser = query => {
         Users.find({ $or: [{ accountHandle: { "$regex": query, "$options": "i" } }, { displayName: { "$regex": query, "$options": "i" } }] }).select('photoURL accountHandle displayName isVerified creationTime').exec().then(found => resolve(found)).catch(err => reject(err));
     });
 }
+
+// Get posts from users that are followed by the provided user id.
+module.exports.getFeedPosts = async uid => {
+    let followed = await Follows.find({ follower: uid }).select('-_id followed').exec();
+    let followedList = followed.map(_f => _f.followed);
+
+    const feedPosts = await Posts.find({ poster: { $in: followedList } }).populate('poster', [ 'displayName', 'accountHandle', 'photoURL', '_id', 'isVerified' ]).sort('-postDate').exec();
+    return feedPosts;
+}
