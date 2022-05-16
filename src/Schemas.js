@@ -442,6 +442,7 @@ module.exports.updateUser = (uid, userData) => {
 // Select 'postCount' amount of random posts from the database.
 module.exports.selectRandomPosts = async (uid, postCount) => {
     let followed = await Follows.find({ follower: uid }).select('-_id followed').exec();
+    let finalisedPosts = [];
 
     let followedList = followed.map(_f => {
         return _f.followed;
@@ -450,9 +451,15 @@ module.exports.selectRandomPosts = async (uid, postCount) => {
     followedList.push(new mongoose.Types.ObjectId(uid));
 
     const explorePosts = await Posts.aggregate().sample(postCount).match({ poster: { $nin: followedList } });
-    await Users.populate(explorePosts, { path: 'poster', select: 'displayName photoURL _id accountHandle isVerified'});
+    await Users.populate(explorePosts, { path: 'poster', select: 'displayName photoURL _id accountHandle isVerified', match: { isPrivate: false }});
 
-    return explorePosts;
+    for (let i = 0; i < explorePosts.length; i++) {
+        if (explorePosts[i].poster) {
+            finalisedPosts.push({ ...explorePosts[i], likes: await this.countLikesByPost(explorePosts[i]._id) });
+        }
+    }
+
+    return finalisedPosts;
 }
 
 // Search for a user by either display name or account handle.
