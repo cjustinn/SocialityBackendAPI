@@ -474,6 +474,13 @@ module.exports.getFeedPosts = async uid => {
     let followed = await Follows.find({ follower: uid }).select('-_id followed').exec();
     let followedList = followed.map(_f => _f.followed);
 
+    let finalisedPostList = [];
+
     const feedPosts = await Posts.find({ poster: { $in: followedList } }).populate('poster', [ 'displayName', 'accountHandle', 'photoURL', '_id', 'isVerified' ]).sort('-postDate').exec();
-    return feedPosts;
+
+    for (let i = 0; i < feedPosts.length; i++) {
+        finalisedPostList.push({ ...feedPosts[i], likes: await this.countLikesByPost(feedPosts[i]._id)});
+    }
+
+    return finalisedPostList;
 }
